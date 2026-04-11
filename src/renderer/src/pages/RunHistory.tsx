@@ -78,7 +78,28 @@ export function RunHistory(): React.JSX.Element {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-secondary mb-4">📜 Historial de Runs</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold text-secondary">📜 Historial de Runs</h1>
+        <div className="flex gap-2">
+          <Button variant="ghost" size="sm" onClick={async () => {
+            try {
+              const result = await window.api.importRunsJSON()
+              if (result.success) {
+                loadRuns()
+              }
+            } catch { /* cancelled */ }
+          }}>
+            📥 Importar JSON
+          </Button>
+          <Button variant="ghost" size="sm" onClick={async () => {
+            try {
+              await window.api.exportAllRunsJSON()
+            } catch { /* cancelled */ }
+          }}>
+            📤 Exportar Todo
+          </Button>
+        </div>
+      </div>
 
       {error && <ErrorMessage message={error} />}
 

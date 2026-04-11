@@ -1,4 +1,5 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron'
+import { writeFileSync } from 'fs'
 import { dungeonService } from '../services/dungeonService'
 import { resourceService } from '../services/resourceService'
 import { runService } from '../services/runService'
@@ -85,15 +86,63 @@ export function registerIpcHandlers(): void {
   )
 
   // === EXPORT/IMPORT ===
-  ipcMain.handle('export:runJSON', (_, runId: number) =>
-    wrapHandler(() => exportService.exportRunJSON(runId))
-  )
-  ipcMain.handle('export:allRunsJSON', () =>
-    wrapHandler(() => exportService.exportAllRunsJSON())
-  )
-  ipcMain.handle('export:runPDF', (_, runId: number) =>
-    wrapHandler(() => exportService.exportRunPDF(runId))
-  )
+  ipcMain.handle('export:runJSON', async (_, runId: number) => {
+    try {
+      const json = exportService.exportRunJSON(runId)
+      const window = BrowserWindow.getFocusedWindow()
+      if (!window) return { success: false, error: 'No hay ventana activa' }
+
+      const date = new Date().toISOString().split('T')[0]
+      const result = await dialog.showSaveDialog(window, {
+        defaultPath: `run_${runId}_${date}.json`,
+        filters: [{ name: 'JSON', extensions: ['json'] }]
+      })
+      if (result.canceled || !result.filePath) return { success: false, error: 'Operación cancelada' }
+
+      writeFileSync(result.filePath, json, 'utf-8')
+      return { success: true, data: result.filePath }
+    } catch (e) {
+      return { success: false, error: (e as Error).message }
+    }
+  })
+  ipcMain.handle('export:allRunsJSON', async () => {
+    try {
+      const json = exportService.exportAllRunsJSON()
+      const window = BrowserWindow.getFocusedWindow()
+      if (!window) return { success: false, error: 'No hay ventana activa' }
+
+      const date = new Date().toISOString().split('T')[0]
+      const result = await dialog.showSaveDialog(window, {
+        defaultPath: `all_runs_${date}.json`,
+        filters: [{ name: 'JSON', extensions: ['json'] }]
+      })
+      if (result.canceled || !result.filePath) return { success: false, error: 'Operación cancelada' }
+
+      writeFileSync(result.filePath, json, 'utf-8')
+      return { success: true, data: result.filePath }
+    } catch (e) {
+      return { success: false, error: (e as Error).message }
+    }
+  })
+  ipcMain.handle('export:runPDF', async (_, runId: number) => {
+    try {
+      const buffer = exportService.exportRunPDF(runId)
+      const window = BrowserWindow.getFocusedWindow()
+      if (!window) return { success: false, error: 'No hay ventana activa' }
+
+      const date = new Date().toISOString().split('T')[0]
+      const result = await dialog.showSaveDialog(window, {
+        defaultPath: `run_${runId}_${date}.pdf`,
+        filters: [{ name: 'PDF', extensions: ['pdf'] }]
+      })
+      if (result.canceled || !result.filePath) return { success: false, error: 'Operación cancelada' }
+
+      writeFileSync(result.filePath, Buffer.from(buffer))
+      return { success: true, data: result.filePath }
+    } catch (e) {
+      return { success: false, error: (e as Error).message }
+    }
+  })
   ipcMain.handle('export:backup', () => wrapHandler(() => exportService.createBackup()))
   ipcMain.handle('export:restoreBackup', () =>
     wrapHandler(() => exportService.restoreBackup())

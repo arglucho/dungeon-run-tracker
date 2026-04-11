@@ -85,21 +85,21 @@ export function RunDetail(): React.JSX.Element {
 
   const handleExportJSON = async (): Promise<void> => {
     try {
-      const result = await window.api.exportRunJSON(parseInt(id!))
-      if (result.success && result.data) {
-        const pathResult = await window.api.dialogSaveFile(
-          `run_${id}_${new Date().toISOString().split('T')[0]}.json`,
-          [{ name: 'JSON', extensions: ['json'] }]
-        )
-        // El JSON se escribe desde el renderer si tenemos la ruta
-        // Nota: la escritura real se hace del lado del main process
-      }
+      await window.api.exportRunJSON(parseInt(id!))
     } catch {
-      setError('Error al exportar')
+      setError('Error al exportar JSON')
     }
   }
 
-  const formatTime = (s: number): string => {
+  const handleExportPDF = async (): Promise<void> => {
+    try {
+      await window.api.exportRunPDF(parseInt(id!))
+    } catch {
+      setError('Error al exportar PDF')
+    }
+  }
+
+  const formatTime= (s: number): string => {
     const m = Math.floor(s / 60)
     const sec = s % 60
     return `${m}m ${sec}s`
@@ -138,6 +138,9 @@ export function RunDetail(): React.JSX.Element {
           </Button>
           <Button variant="ghost" size="sm" onClick={handleExportJSON}>
             📤 JSON
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleExportPDF}>
+            📄 PDF
           </Button>
           <Button variant="danger" size="sm" onClick={() => setShowDelete(true)}>
             🗑️ Eliminar

@@ -1,9 +1,11 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { initializeDatabase, runMigrations, seedDatabase, closeDatabase } from './database'
+import { initializeDatabase, runMigrations, seedDatabase, closeDatabase, getDatabase } from './database'
 import { registerIpcHandlers } from './ipc/handlers'
+
+let forceQuit = false
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -20,6 +22,32 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+  })
+
+  // Close protection: warn if there's an active run
+  mainWindow.on('close', (e) => {
+    if (forceQuit) return
+
+    try {
+      const db = getDatabase()
+      const activeRun = db.prepare("SELECT id FROM runs WHERE status = 'IN_PROGRESS' LIMIT 1").get()
+      if (activeRun) {
+        const choice = dialog.showMessageBoxSync(mainWindow, {
+          type: 'warning',
+          title: 'Run en progreso',
+          message: 'Tenés una run en progreso. ¿Seguro que querés salir?',
+          detail: 'La run quedará en estado "En progreso" y podrás continuarla al reabrir la app.',
+          buttons: ['Cancelar', 'Salir'],
+          defaultId: 0,
+          cancelId: 0
+        })
+        if (choice === 0) {
+          e.preventDefault()
+        }
+      }
+    } catch {
+      // If DB check fails, allow close
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
