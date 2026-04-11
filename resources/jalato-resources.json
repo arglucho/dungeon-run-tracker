@@ -1,0 +1,13 @@
+{
+  "dungeon": {
+    "name": "Mazmorra Jalató",
+    "expected_rooms": 10,
+    "description": "Mazmorra de Jalató en Dofus Retro"
+  },
+  "resources": [
+    "Lana de jalatín blanco",
+    "Cuero de jalatín negro",
+    "Baba de jalató",
+    "AGREGAR_MAS_RECURSOS_AQUI"
+  ]
+}

@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/* ============================================
+   DUNGEON RUN TRACKER — Tema Dofus Retro
+   Paleta medieval/fantasía con colores tierra
+   ============================================ */
+
+@theme {
+  /* --- Colores principales --- */
+  --color-primary: #8B7355;
+  --color-primary-light: #A89279;
+  --color-primary-dark: #6B5640;
+
+  --color-secondary: #C9A84C;
+  --color-secondary-light: #D4BC72;
+  --color-secondary-dark: #A88A30;
+
+  --color-accent: #2E5439;
+  --color-accent-light: #3D6F4C;
+  --color-accent-dark: #1F3A27;
+
+  /* --- Fondos --- */
+  --color-bg: #2C2216;
+  --color-bg-light: #3E3122;
+  --color-bg-lighter: #4F402E;
+  --color-bg-card: #3A2E1F;
+  --color-bg-input: #241D14;
+
+  /* --- Textos --- */
+  --color-text: #F5F0E1;
+  --color-text-muted: #B8A88A;
+  --color-text-dark: #8B7355;
+
+  /* --- Bordes --- */
+  --color-border: #6B5640;
+  --color-border-light: #8B7355;
+  --color-border-gold: #C9A84C;
+
+  /* --- Estados --- */
+  --color-success: #4A7C59;
+  --color-danger: #8B3A3A;
+  --color-danger-light: #A84C4C;
+  --color-warning: #C9A84C;
+  --color-info: #4A6B8B;
+
+  /* --- Tipografía --- */
+  --font-title: 'Georgia', 'Times New Roman', serif;
+  --font-body: 'Segoe UI', 'Arial', sans-serif;
+
+  /* --- Bordes redondeados medievales --- */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+/* ============================================
+   Estilos base globales
+   ============================================ */
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  color: var(--color-secondary);
+}
+
+/* Scrollbar con estilo medieval */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-light);
+}
+
+/* Links */
+a {
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-secondary-light);
+}
+
+/* Selección de texto */
+::selection {
+  background-color: var(--color-secondary-dark);
+  color: var(--color-text);
+}

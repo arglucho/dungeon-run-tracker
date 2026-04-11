@@ -1,0 +1,22 @@
+node_modules
+dist
+out
+.DS_Store
+.eslintcache
+*.log*
+
+# Database files
+*.db
+*.db-wal
+*.db-shm
+
+# Environment
+.env.local
+
+# Backups
+backups/
+
+# IDE
+.idea/
+*.swp
+*.swo
