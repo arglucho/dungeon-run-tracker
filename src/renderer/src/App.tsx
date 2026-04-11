@@ -1,18 +1,41 @@
+import { HashRouter, Routes, Route } from 'react-router-dom'
+import { Layout } from './components'
+import { RunProvider } from './context'
+import {
+  Dashboard,
+  NewRun,
+  RoomRegistration,
+  RunDetail,
+  RunEdit,
+  RunHistory,
+  RunFinished,
+  Statistics,
+  Comparison,
+  Resources,
+  Dungeons
+} from './pages'
+
 function App(): React.JSX.Element {
   return (
-    <div className="min-h-screen bg-bg p-8 flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold text-secondary mb-4">
-        ⚔️ Dungeon Run Tracker
-      </h1>
-      <p className="text-text-muted text-lg">
-        Dofus Retro — Registro y análisis de runs de mazmorras
-      </p>
-      <div className="mt-8 p-6 bg-bg-card border border-border rounded-lg">
-        <p className="text-text">
-          Aplicación en desarrollo. Tema Dofus Retro activo.
-        </p>
-      </div>
-    </div>
+    <HashRouter>
+      <RunProvider>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/new-run" element={<NewRun />} />
+            <Route path="/run/:id/room" element={<RoomRegistration />} />
+            <Route path="/run/:id/finished" element={<RunFinished />} />
+            <Route path="/run/:id" element={<RunDetail />} />
+            <Route path="/run/:id/edit" element={<RunEdit />} />
+            <Route path="/history" element={<RunHistory />} />
+            <Route path="/statistics" element={<Statistics />} />
+            <Route path="/compare" element={<Comparison />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/dungeons" element={<Dungeons />} />
+          </Route>
+        </Routes>
+      </RunProvider>
+    </HashRouter>
   )
 }
 
