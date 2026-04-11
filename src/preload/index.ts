@@ -51,7 +51,10 @@ const api = {
   dialogSaveFile: (defaultName: string, filters: { name: string; extensions: string[] }[]) =>
     ipcRenderer.invoke('dialog:saveFile', defaultName, filters),
   dialogOpenFile: (filters: { name: string; extensions: string[] }[]) =>
-    ipcRenderer.invoke('dialog:openFile', filters)
+    ipcRenderer.invoke('dialog:openFile', filters),
+
+  // Mock (solo dev)
+  mockGenerate: (count: number) => ipcRenderer.invoke('mock:generate', count)
 }
 
 if (process.contextIsolated) {

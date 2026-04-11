@@ -1,11 +1,13 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron'
 import { writeFileSync } from 'fs'
+import { is } from '@electron-toolkit/utils'
 import { dungeonService } from '../services/dungeonService'
 import { resourceService } from '../services/resourceService'
 import { runService } from '../services/runService'
 import { roomService } from '../services/roomService'
 import { statsService } from '../services/statsService'
 import { exportService } from '../services/exportService'
+import { mockService } from '../services/mockService'
 
 function wrapHandler<T>(fn: () => T): { success: boolean; data?: T; error?: string } {
   try {
@@ -150,6 +152,13 @@ export function registerIpcHandlers(): void {
   ipcMain.handle('export:importJSON', () =>
     wrapHandler(() => exportService.importRunsJSON())
   )
+
+  // === MOCK DATA (solo dev) ===
+  if (is.dev) {
+    ipcMain.handle('mock:generate', (_, count: number) =>
+      wrapHandler(() => mockService.generateMockRuns(count))
+    )
+  }
 
   // === DIÁLOGOS NATIVOS ===
   ipcMain.handle(

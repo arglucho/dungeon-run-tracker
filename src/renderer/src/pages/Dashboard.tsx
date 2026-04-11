@@ -105,6 +105,17 @@ export function Dashboard(): React.JSX.Element {
         <Button variant="ghost" onClick={handleBackup}>
           💾 Crear Backup
         </Button>
+        <Button variant="ghost" onClick={async () => {
+          try {
+            const result = await window.api.mockGenerate(50)
+            if (result.success) {
+              alert(`✅ ${result.data?.generated ?? 0} runs mock generadas`)
+              window.location.reload()
+            }
+          } catch { /* ignore */ }
+        }}>
+          🧪 Mock Data (50)
+        </Button>
       </div>
 
       {/* Resumen global */}

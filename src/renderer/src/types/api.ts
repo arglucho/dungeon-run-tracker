@@ -65,4 +65,7 @@ export interface DrtApi {
   // Diálogos nativos
   dialogSaveFile(defaultName: string, filters: { name: string; extensions: string[] }[]): Promise<ServiceResult<string>>
   dialogOpenFile(filters: { name: string; extensions: string[] }[]): Promise<ServiceResult<string>>
+
+  // Mock (solo dev)
+  mockGenerate(count: number): Promise<ServiceResult<{ generated: number }>>
 }
