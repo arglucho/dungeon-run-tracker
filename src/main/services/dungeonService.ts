@@ -76,23 +76,5 @@ export const dungeonService = {
 
     values.push(id)
     db.prepare(`UPDATE dungeons SET ${fields.join(', ')} WHERE id = ?`).run(...values)
-  },
-
-  delete(id: number): void {
-    const db = getDatabase()
-    const dungeon = db.prepare('SELECT * FROM dungeons WHERE id = ?').get(id)
-    if (!dungeon) throw new Error('Mazmorra no encontrada')
-
-    // Check if any runs reference this dungeon
-    const runCount = db
-      .prepare('SELECT COUNT(*) as count FROM runs WHERE dungeon_id = ?')
-      .get(id) as { count: number }
-    if (runCount.count > 0) {
-      throw new Error(
-        `No se puede eliminar: hay ${runCount.count} run${runCount.count > 1 ? 's' : ''} asociada${runCount.count > 1 ? 's' : ''} a esta mazmorra`
-      )
-    }
-
-    db.prepare('DELETE FROM dungeons WHERE id = ?').run(id)
   }
 }

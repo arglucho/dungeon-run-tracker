@@ -23,7 +23,6 @@ export function RoomRegistration(): React.JSX.Element {
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [showAbandon, setShowAbandon] = useState(false)
-  const [timerKey, setTimerKey] = useState(0)
 
   useEffect(() => {
     if (!loading && !activeRun) {
@@ -87,7 +86,6 @@ export function RoomRegistration(): React.JSX.Element {
         } else {
           // Limpiar formulario
           setTimeSeconds(0)
-          setTimerKey((k) => k + 1)
           setTurns('')
           setXp('')
           setKamas('')
@@ -180,7 +178,7 @@ export function RoomRegistration(): React.JSX.Element {
         </h2>
         <div className="flex flex-col gap-4">
           {/* Timer */}
-          <Timer key={timerKey} onTimeSet={setTimeSeconds} disabled={saving} />
+          <Timer onTimeSet={setTimeSeconds} disabled={saving} />
 
           {/* Turnos */}
           <Input

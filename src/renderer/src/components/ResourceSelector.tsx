@@ -35,10 +35,9 @@ export function ResourceSelector({ onAdd, disabled = false }: ResourceSelectorPr
   }, [])
 
   useEffect(() => {
-    if (selectedResource) return
     const timer = setTimeout(() => searchResources(query), 200)
     return () => clearTimeout(timer)
-  }, [query, searchResources, selectedResource])
+  }, [query, searchResources])
 
   const handleSelect = (resource: Resource): void => {
     setSelectedResource(resource)
