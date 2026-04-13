@@ -6,7 +6,8 @@ const navItems = [
   { to: '/statistics', label: 'Estadísticas', icon: '📊' },
   { to: '/compare', label: 'Comparador', icon: '⚖️' },
   { to: '/resources', label: 'Recursos', icon: '💎' },
-  { to: '/dungeons', label: 'Mazmorras', icon: '🏰' }
+  { to: '/dungeons', label: 'Mazmorras', icon: '🏰' },
+  { to: '/settings', label: 'Opciones', icon: '⚙️' }
 ]
 
 export function Navbar(): React.JSX.Element {

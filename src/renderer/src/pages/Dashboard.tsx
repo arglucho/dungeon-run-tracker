@@ -57,19 +57,6 @@ export function Dashboard(): React.JSX.Element {
     return h > 0 ? `${h}h ${m}m` : `${m}m`
   }
 
-  const handleBackup = async (): Promise<void> => {
-    try {
-      const result = await window.api.createBackup()
-      if (result.success) {
-        alert('✅ Backup creado correctamente')
-      } else {
-        if (result.error !== 'Operación cancelada') alert(`❌ ${result.error}`)
-      }
-    } catch {
-      alert('❌ Error al crear backup')
-    }
-  }
-
   if (loading || runLoading) return <LoadingSpinner message="Cargando dashboard..." />
 
   return (
@@ -95,27 +82,13 @@ export function Dashboard(): React.JSX.Element {
         </Card>
       )}
 
-      {/* Botones principales */}
+      {/* Botón principal */}
       <div className="flex gap-3 mb-6">
         {!activeRun && (
           <Button variant="secondary" onClick={() => navigate('/new-run')}>
             🚀 Nueva Run
           </Button>
         )}
-        <Button variant="ghost" onClick={handleBackup}>
-          💾 Crear Backup
-        </Button>
-        <Button variant="ghost" onClick={async () => {
-          try {
-            const result = await window.api.mockGenerate(50)
-            if (result.success) {
-              alert(`✅ ${result.data?.generated ?? 0} runs mock generadas`)
-              window.location.reload()
-            }
-          } catch { /* ignore */ }
-        }}>
-          🧪 Mock Data (50)
-        </Button>
       </div>
 
       {/* Resumen global */}

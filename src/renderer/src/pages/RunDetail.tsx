@@ -124,13 +124,18 @@ export function RunDetail(): React.JSX.Element {
     <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-secondary">
-            📋 Run #{run.id} — {run.dungeon_name}
-          </h1>
-          <p className="text-sm text-text-muted">
-            {formatDate(run.start_time)} • {run.is_group ? '👥 Grupo' : '🧍 Solo'} • {statusLabels[run.status]}
-          </p>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+            ← Volver
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-secondary">
+              📋 Run #{run.id} — {run.dungeon_name}
+            </h1>
+            <p className="text-sm text-text-muted">
+              {formatDate(run.start_time)} • {run.is_group ? '👥 Grupo' : '🧍 Solo'} • {statusLabels[run.status]}
+            </p>
+          </div>
         </div>
         <div className="flex gap-2">
           <Button variant="ghost" size="sm" onClick={() => navigate(`/run/${id}/edit`)}>

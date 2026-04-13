@@ -60,7 +60,8 @@ export function Comparison(): React.JSX.Element {
     try {
       const result = await window.api.statsCompare(selected)
       if (result.success) {
-        setComparison(result.data as CompareData[])
+        const data = result.data as { runs: CompareData[] } | CompareData[]
+        setComparison(Array.isArray(data) ? data : data.runs)
       } else {
         setError(result.error ?? 'Error al comparar')
       }

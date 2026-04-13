@@ -7,6 +7,7 @@ const api = {
   dungeonGetById: (id: number) => ipcRenderer.invoke('dungeon:getById', id),
   dungeonCreate: (input: unknown) => ipcRenderer.invoke('dungeon:create', input),
   dungeonUpdate: (id: number, input: unknown) => ipcRenderer.invoke('dungeon:update', id, input),
+  dungeonDelete: (id: number) => ipcRenderer.invoke('dungeon:delete', id),
 
   // Recursos
   resourceGetAll: () => ipcRenderer.invoke('resource:getAll'),

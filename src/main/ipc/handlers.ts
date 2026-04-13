@@ -30,6 +30,9 @@ export function registerIpcHandlers(): void {
   ipcMain.handle('dungeon:update', (_, id: number, input) =>
     wrapHandler(() => dungeonService.update(id, input))
   )
+  ipcMain.handle('dungeon:delete', (_, id: number) =>
+    wrapHandler(() => dungeonService.delete(id))
+  )
 
   // === RECURSOS ===
   ipcMain.handle('resource:getAll', () => wrapHandler(() => resourceService.getAll()))

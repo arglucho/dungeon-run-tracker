@@ -3,11 +3,13 @@ interface CardProps {
   children: React.ReactNode
   className?: string
   gold?: boolean
+  onClick?: (e: React.MouseEvent) => void
 }
 
-export function Card({ title, children, className = '', gold = false }: CardProps): React.JSX.Element {
+export function Card({ title, children, className = '', gold = false, onClick }: CardProps): React.JSX.Element {
   return (
     <div
+      onClick={onClick}
       className={`
         bg-bg-card border rounded-lg p-4
         ${gold ? 'border-border-gold' : 'border-border'}
