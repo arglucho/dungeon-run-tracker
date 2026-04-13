@@ -1,7 +1,6 @@
-import { app, shell, BrowserWindow, dialog, protocol, net } from 'electron'
+import { app, shell, BrowserWindow, dialog, protocol } from 'electron'
 import { join } from 'path'
-import { pathToFileURL } from 'url'
-import { existsSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { initializeDatabase, runMigrations, seedDatabase, closeDatabase, getDatabase } from './database'
@@ -83,15 +82,23 @@ app.whenReady().then(() => {
     const itemsDir = is.dev
       ? join(app.getAppPath(), 'resources', 'items')
       : join(process.resourcesPath, 'resources', 'items')
-    const filePath = join(itemsDir, filename)
-    if (existsSync(filePath)) {
-      return net.fetch(pathToFileURL(filePath).href)
+
+    let filePath = join(itemsDir, filename)
+    if (!existsSync(filePath)) {
+      filePath = join(itemsDir, 'not_found.svg')
     }
-    const notFoundPath = join(itemsDir, 'not_found.svg')
-    if (existsSync(notFoundPath)) {
-      return net.fetch(pathToFileURL(notFoundPath).href)
+    if (!existsSync(filePath)) {
+      return new Response('Not found', { status: 404 })
     }
-    return new Response('Not found', { status: 404 })
+
+    const data = readFileSync(filePath)
+    return new Response(data, {
+      status: 200,
+      headers: {
+        'Content-Type': 'image/svg+xml',
+        'Cache-Control': 'public, max-age=3600'
+      }
+    })
   })
 
   // Inicializar base de datos
