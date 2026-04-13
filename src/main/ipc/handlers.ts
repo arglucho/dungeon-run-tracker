@@ -1,5 +1,6 @@
-import { ipcMain, dialog, BrowserWindow } from 'electron'
-import { writeFileSync } from 'fs'
+import { ipcMain, dialog, BrowserWindow, app } from 'electron'
+import { writeFileSync, readdirSync, existsSync } from 'fs'
+import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { dungeonService } from '../services/dungeonService'
 import { resourceService } from '../services/resourceService'
@@ -47,6 +48,17 @@ export function registerIpcHandlers(): void {
   )
   ipcMain.handle('resource:delete', (_, id: number) =>
     wrapHandler(() => resourceService.delete(id))
+  )
+  ipcMain.handle('resource:listImages', () =>
+    wrapHandler(() => {
+      const itemsDir = is.dev
+        ? join(app.getAppPath(), 'resources', 'items')
+        : join(process.resourcesPath, 'resources', 'items')
+      if (!existsSync(itemsDir)) return []
+      return readdirSync(itemsDir)
+        .filter((f) => f.toLowerCase().endsWith('.svg') && f !== '.gitkeep')
+        .sort()
+    })
   )
 
   // === RUNS ===

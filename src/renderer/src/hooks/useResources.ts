@@ -3,8 +3,20 @@ import { useState, useEffect, useCallback } from 'react'
 interface Resource {
   id: number
   name: string
+  image_filename: string | null
+  pods: number | null
+  level: number | null
+  description: string | null
   created_at: string
   is_active: number
+}
+
+interface ResourceInput {
+  name: string
+  image_filename?: string | null
+  pods?: number | null
+  level?: number | null
+  description?: string | null
 }
 
 interface UseResourcesReturn {
@@ -12,8 +24,8 @@ interface UseResourcesReturn {
   loading: boolean
   error: string | null
   refresh: () => void
-  create: (name: string) => Promise<boolean>
-  update: (id: number, name: string) => Promise<boolean>
+  create: (input: ResourceInput) => Promise<boolean>
+  update: (id: number, input: ResourceInput) => Promise<boolean>
   remove: (id: number) => Promise<boolean>
   search: (query: string) => Promise<Resource[]>
 }
@@ -45,9 +57,9 @@ export function useResources(): UseResourcesReturn {
   }, [refresh])
 
   const create = useCallback(
-    async (name: string): Promise<boolean> => {
+    async (input: ResourceInput): Promise<boolean> => {
       try {
-        const result = await window.api.resourceCreate({ name })
+        const result = await window.api.resourceCreate(input)
         if (result.success) {
           await refresh()
           return true
@@ -63,9 +75,9 @@ export function useResources(): UseResourcesReturn {
   )
 
   const update = useCallback(
-    async (id: number, name: string): Promise<boolean> => {
+    async (id: number, input: ResourceInput): Promise<boolean> => {
       try {
-        const result = await window.api.resourceUpdate(id, { name })
+        const result = await window.api.resourceUpdate(id, input)
         if (result.success) {
           await refresh()
           return true

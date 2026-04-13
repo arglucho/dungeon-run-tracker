@@ -31,6 +31,7 @@ export interface DrtApi {
   resourceCreate(input: CreateResourceInput): Promise<ServiceResult<{ id: number }>>
   resourceUpdate(id: number, input: UpdateResourceInput): Promise<ServiceResult>
   resourceDelete(id: number): Promise<ServiceResult>
+  resourceListImages(): Promise<ServiceResult<string[]>>
 
   // Runs
   runCreate(input: CreateRunInput): Promise<ServiceResult<{ id: number }>>

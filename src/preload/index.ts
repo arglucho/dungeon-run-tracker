@@ -15,6 +15,7 @@ const api = {
   resourceCreate: (input: unknown) => ipcRenderer.invoke('resource:create', input),
   resourceUpdate: (id: number, input: unknown) => ipcRenderer.invoke('resource:update', id, input),
   resourceDelete: (id: number) => ipcRenderer.invoke('resource:delete', id),
+  resourceListImages: () => ipcRenderer.invoke('resource:listImages'),
 
   // Runs
   runCreate: (input: unknown) => ipcRenderer.invoke('run:create', input),

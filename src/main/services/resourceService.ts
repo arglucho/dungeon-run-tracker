@@ -3,8 +3,20 @@ import { getDatabase } from '../database'
 interface ResourceRow {
   id: number
   name: string
+  image_filename: string | null
+  pods: number | null
+  level: number | null
+  description: string | null
   created_at: string
   is_active: number
+}
+
+interface ResourceInput {
+  name: string
+  image_filename?: string | null
+  pods?: number | null
+  level?: number | null
+  description?: string | null
 }
 
 export const resourceService = {
@@ -23,7 +35,23 @@ export const resourceService = {
       .all(`%${query.trim()}%`) as ResourceRow[]
   },
 
-  create(input: { name: string }): { id: number } {
+  listImages(): string[] {
+    const { readdirSync, existsSync } = require('fs') as typeof import('fs')
+    const { join } = require('path') as typeof import('path')
+    const { is } = require('@electron-toolkit/utils') as typeof import('@electron-toolkit/utils')
+    const { app } = require('electron') as typeof import('electron')
+
+    const itemsDir = is.dev
+      ? join(app.getAppPath(), 'resources', 'items')
+      : join(process.resourcesPath, 'resources', 'items')
+
+    if (!existsSync(itemsDir)) return []
+    return readdirSync(itemsDir)
+      .filter((f: string) => f.toLowerCase().endsWith('.svg') && f !== '.gitkeep')
+      .sort()
+  },
+
+  create(input: ResourceInput): { id: number } {
     const db = getDatabase()
 
     if (!input.name || input.name.trim().length === 0) {
@@ -38,8 +66,14 @@ export const resourceService = {
     if (existing) {
       if (existing.is_active === 0) {
         // Reactivar recurso existente
-        db.prepare('UPDATE resources SET is_active = 1, name = ? WHERE id = ?').run(
+        db.prepare(
+          'UPDATE resources SET is_active = 1, name = ?, image_filename = ?, pods = ?, level = ?, description = ? WHERE id = ?'
+        ).run(
           input.name.trim(),
+          input.image_filename ?? null,
+          input.pods ?? null,
+          input.level ?? null,
+          input.description ?? null,
           existing.id
         )
         return { id: existing.id }
@@ -48,13 +82,21 @@ export const resourceService = {
     }
 
     const result = db
-      .prepare('INSERT INTO resources (name) VALUES (?)')
-      .run(input.name.trim())
+      .prepare(
+        'INSERT INTO resources (name, image_filename, pods, level, description) VALUES (?, ?, ?, ?, ?)'
+      )
+      .run(
+        input.name.trim(),
+        input.image_filename ?? null,
+        input.pods ?? null,
+        input.level ?? null,
+        input.description ?? null
+      )
 
     return { id: result.lastInsertRowid as number }
   },
 
-  update(id: number, input: { name: string }): void {
+  update(id: number, input: ResourceInput): void {
     const db = getDatabase()
     const resource = db.prepare('SELECT * FROM resources WHERE id = ? AND is_active = 1').get(id)
     if (!resource) throw new Error('Recurso no encontrado')
@@ -70,7 +112,16 @@ export const resourceService = {
 
     if (existing) throw new Error('Ya existe un recurso con ese nombre')
 
-    db.prepare('UPDATE resources SET name = ? WHERE id = ?').run(input.name.trim(), id)
+    db.prepare(
+      'UPDATE resources SET name = ?, image_filename = ?, pods = ?, level = ?, description = ? WHERE id = ?'
+    ).run(
+      input.name.trim(),
+      input.image_filename ?? null,
+      input.pods ?? null,
+      input.level ?? null,
+      input.description ?? null,
+      id
+    )
   },
 
   delete(id: number): void {

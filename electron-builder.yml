@@ -16,6 +16,7 @@ extraResources:
     to: resources/
     filter:
       - '**/*.json'
+      - '**/*.svg'
 asarUnpack:
   - resources/**
 win:

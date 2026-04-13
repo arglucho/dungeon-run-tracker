@@ -1,9 +1,16 @@
-import { app, shell, BrowserWindow, dialog } from 'electron'
+import { app, shell, BrowserWindow, dialog, protocol, net } from 'electron'
 import { join } from 'path'
+import { pathToFileURL } from 'url'
+import { existsSync } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { initializeDatabase, runMigrations, seedDatabase, closeDatabase, getDatabase } from './database'
 import { registerIpcHandlers } from './ipc/handlers'
+
+// Debe registrarse ANTES de app.whenReady()
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'item', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } }
+])
 
 let forceQuit = false
 
@@ -67,6 +74,24 @@ app.whenReady().then(() => {
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
+  })
+
+  // Protocolo para servir imágenes de recursos desde resources/items/
+  protocol.handle('item', (request) => {
+    const { pathname } = new URL(request.url)
+    const filename = decodeURIComponent(pathname.replace(/^\/+/, ''))
+    const itemsDir = is.dev
+      ? join(app.getAppPath(), 'resources', 'items')
+      : join(process.resourcesPath, 'resources', 'items')
+    const filePath = join(itemsDir, filename)
+    if (existsSync(filePath)) {
+      return net.fetch(pathToFileURL(filePath).href)
+    }
+    const notFoundPath = join(itemsDir, 'not_found.svg')
+    if (existsSync(notFoundPath)) {
+      return net.fetch(pathToFileURL(notFoundPath).href)
+    }
+    return new Response('Not found', { status: 404 })
   })
 
   // Inicializar base de datos
