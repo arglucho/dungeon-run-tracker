@@ -11,15 +11,12 @@ interface DungeonForm {
 const emptyForm: DungeonForm = { name: '', expected_rooms: '', description: '' }
 
 export function Dungeons(): React.JSX.Element {
-  const { dungeons, loading, error, create, update, remove } = useDungeons()
+  const { dungeons, loading, error, create, update } = useDungeons()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<DungeonForm>(emptyForm)
   const [formError, setFormError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
-  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null)
-  const [deleting, setDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const openCreate = (): void => {
     setEditingId(null)
@@ -68,19 +65,6 @@ export function Dungeons(): React.JSX.Element {
     }
   }
 
-  const handleDelete = async (): Promise<void> => {
-    if (!deleteTarget) return
-    setDeleting(true)
-    setDeleteError(null)
-    const result = await remove(deleteTarget.id)
-    setDeleting(false)
-    if (result.success) {
-      setDeleteTarget(null)
-    } else {
-      setDeleteError(result.error ?? 'Error al eliminar')
-    }
-  }
-
   if (loading) return <LoadingSpinner message="Cargando mazmorras..." />
 
   return (
@@ -115,9 +99,6 @@ export function Dungeons(): React.JSX.Element {
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => openEdit(d)}>
                   ✏️
-                </Button>
-                <Button variant="danger" size="sm" onClick={() => setDeleteTarget({ id: d.id, name: d.name })}>
-                  🗑️
                 </Button>
               </div>
             </Card>
@@ -164,28 +145,6 @@ export function Dungeons(): React.JSX.Element {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
         </div>
-      </Modal>
-
-      {/* Modal confirmar eliminación */}
-      <Modal
-        open={deleteTarget !== null}
-        onClose={() => { setDeleteTarget(null); setDeleteError(null) }}
-        title="Eliminar Mazmorra"
-        actions={
-          <>
-            <Button variant="ghost" onClick={() => { setDeleteTarget(null); setDeleteError(null) }} disabled={deleting}>
-              Cancelar
-            </Button>
-            <Button variant="danger" onClick={handleDelete} loading={deleting}>
-              Sí, eliminar
-            </Button>
-          </>
-        }
-      >
-        {deleteError && <ErrorMessage message={deleteError} />}
-        <p className="text-text-muted">
-          ¿Estás seguro de que querés eliminar la mazmorra <strong className="text-text">{deleteTarget?.name}</strong>? Esta acción no se puede deshacer.
-        </p>
       </Modal>
     </div>
   )

@@ -12,8 +12,7 @@ import {
   Statistics,
   Comparison,
   Resources,
-  Dungeons,
-  Settings
+  Dungeons
 } from './pages'
 
 function App(): React.JSX.Element {
@@ -33,7 +32,6 @@ function App(): React.JSX.Element {
             <Route path="/compare" element={<Comparison />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/dungeons" element={<Dungeons />} />
-            <Route path="/settings" element={<Settings />} />
           </Route>
         </Routes>
       </RunProvider>

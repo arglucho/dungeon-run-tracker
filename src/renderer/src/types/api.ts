@@ -23,7 +23,6 @@ export interface DrtApi {
   dungeonGetById(id: number): Promise<ServiceResult<Dungeon>>
   dungeonCreate(input: CreateDungeonInput): Promise<ServiceResult<{ id: number }>>
   dungeonUpdate(id: number, input: UpdateDungeonInput): Promise<ServiceResult>
-  dungeonDelete(id: number): Promise<ServiceResult>
 
   // Recursos
   resourceGetAll(): Promise<ServiceResult<Resource[]>>

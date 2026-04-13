@@ -15,7 +15,6 @@ interface UseDungeonsReturn {
   refresh: () => void
   create: (name: string, expectedRooms: number, description?: string) => Promise<boolean>
   update: (id: number, name: string, expectedRooms: number, description?: string) => Promise<boolean>
-  remove: (id: number) => Promise<{ success: boolean; error?: string }>
 }
 
 export function useDungeons(): UseDungeonsReturn {
@@ -80,25 +79,5 @@ export function useDungeons(): UseDungeonsReturn {
     [refresh]
   )
 
-  const remove = useCallback(
-    async (id: number): Promise<{ success: boolean; error?: string }> => {
-      try {
-        const result = await window.api.dungeonDelete(id)
-        if (result.success) {
-          await refresh()
-          return { success: true }
-        }
-        const errorMsg = result.error ?? 'Error al eliminar mazmorra'
-        setError(errorMsg)
-        return { success: false, error: errorMsg }
-      } catch {
-        const errorMsg = 'Error de conexión'
-        setError(errorMsg)
-        return { success: false, error: errorMsg }
-      }
-    },
-    [refresh]
-  )
-
-  return { dungeons, loading, error, refresh, create, update, remove }
+  return { dungeons, loading, error, refresh, create, update }
 }
